@@ -22,3 +22,6 @@ When there are more than two GM-Counters connected to PC, the software shows bel
 
 You should input a serial port name that you choose to burn firmware.
 If you input an invalid serial port name, the software will ask you again.
+
+## author
+brother_yan
