@@ -239,7 +239,7 @@ def burn_firmware_GM_Counter(firmware): # MCU : STM32L051C8T6
     ports = serial.tools.list_ports.comports()
     GM_Counter_ports = []
     for port in ports:
-        if 'CH340K' in port.description:
+        if 'CH340' in port.description:
             GM_Counter_ports.append(port.device)
     
     if len(GM_Counter_ports) == 0:
@@ -283,12 +283,14 @@ def burn_firmware_GM_Counter(firmware): # MCU : STM32L051C8T6
         print('\rVerifying... %5.1f %%  %5.2f s' % (ofs / len(firmware) * 100, perf_counter() - start), end = '')
     print('\rVerifying... %5.1f %%  %5.2f s' % (100, perf_counter() - start))
     
+    r = burn.Go()
+    
     if firmware_read[:len(firmware)] != firmware:
-        burn.end()
+        burn.end(not r)
         print('Failed to burn firmware')
         return False
     else:
-        burn.end()
+        burn.end(not r)
         print('Done')
         return True
 
@@ -303,12 +305,15 @@ if __name__ == '__main__':
     os.system('COLOR 0A')
     
     if len(sys.argv) >= 2:
-        with open(sys.argv[1], 'rb') as f:
-            firmware = f.read()
+        if sys.argv[1][-4:] == '.bin':
+            with open(sys.argv[1], 'rb') as f:
+                firmware = f.read()
+            burn_firmware_GM_Counter(firmware)
+        else:
+            print('Please use *.bin format firmware')
     else:
         firmware = v163a_firmware
-    
-    burn_firmware_GM_Counter(firmware)
+        burn_firmware_GM_Counter(firmware)
     
     print()
     input('press enter to exit')
