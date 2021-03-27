@@ -12,13 +12,9 @@ ACK = b'\x79' # 'y'
 NACK = b'\x1F'
 
 class Burn(): # see AN3155 for detail
-    def __init__(self, port = None, baudrate = 115200):
-        try:
-            ser = serial.Serial(port = port, baudrate = baudrate, bytesize = 8, parity = 'E', stopbits = 1, timeout = 3)
-            self.ser = ser
-        except:
-            ser = serial.Serial(port = None, baudrate = 115200, bytesize = 8, parity = 'E', stopbits = 1, timeout = 3)
-            self.ser = ser
+    def __init__(self, baudrate = 115200):
+        ser = serial.Serial(port = None, baudrate = 115200, bytesize = 8, parity = 'E', stopbits = 1, timeout = 3)
+        self.ser = ser
     
     def __del__(self):
         ser = self.ser
@@ -26,6 +22,8 @@ class Burn(): # see AN3155 for detail
     
     def begin(self, port = None):
         ser = self.ser
+        ser.rts = False # 防止打开串口后RTS从高电平变成低电平
+        ser.dtr = False # 防止打开串口后DTR从高电平变成低电平
         if port != None:
             ser.close()
             ser.setPort(port)
