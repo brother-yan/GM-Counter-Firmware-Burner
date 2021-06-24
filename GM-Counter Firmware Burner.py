@@ -170,7 +170,8 @@ class Burn(): # see AN3155 for detail
                     return True
         return False
     
-    def WriteMemory(self, addr, data): # data size <= 256
+    def WriteMemory(self, addr, data): # data size <= 256, and data size should be a multiple of 4
+        data = data + b'\x00' * ((4 - len(data) % 4) % 4)
         ser = self.ser
         if ser.isOpen():
             ser.write(b'\x31\xce')
